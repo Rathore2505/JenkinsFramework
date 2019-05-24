@@ -1,5 +1,4 @@
 package BuildLibrary
-
 import groovy.json.JsonSlurperClassic
 import groovy.json.JsonSlurper
 import groovy.util.XmlSlurper
@@ -20,7 +19,7 @@ import java.lang.Integer
 
 def BuildAvailCall(def FileLocation)
  {
-	def readFileContents = new File(FileLocation).getText()
+    def readFileContents = new File(FileLocation).getText()
     def config = new XmlSlurper().parseText(readFileContents)
     def buildchoice = ""
 
