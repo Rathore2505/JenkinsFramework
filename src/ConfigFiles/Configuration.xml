@@ -1,17 +1,50 @@
 <configuration>
-  <GeneralDetails>
-    <add key="ProjectName" value="PACS" />
-  </GeneralDetails>
-  <VMSetup>
-    <Server host="pa-tst5-w16" network ="NEPTUNE" actions="VmPowerOn" snap="" />
-    <Server host="pa-tst4-ws16" network ="NEPTUNE" actions="VmPowerOn" snap="" />
-  </VMSetup>
-  <ServerSetup>
-    <Server host="pa-tst5-w16" actions="BuildDownlod" BuildURL ="https://ica-build-w2016.products.network.internal:8443" BuildJob = "iCA_Python" BuildOutloc ="C:\PACS_build\8_1_0"  />
-    <Server host="pa-tst5-ws16" actions="BuildDownlod,BuildInstall" BuildURL ="https://ica-build-w2016.products.network.internal:8443" BuildOutloc ="C:\PACS_build\8_1_0" InstallFile = "C:\imgdrv\Supdate.pl" />
-  </ServerSetup>
-  <EmailSettings>
-    <add key="RecipientList" value="sivan.arunachalam@ravsoftsolutions.com" />
-    <Server host="pa-tst4-ws16" network ="Neptune" actions="VmPowerOff" snap="" />
+	<BuildAvailability>
+     // BuildRepo values are Jenkins or Folder
+     // BuildChoice values are Today, LastSuccessful, Predefined
+	 <Builds Desc="FolB1" BuildRepo="Folder" NetworkFolderPath="\\10.5.239.248\C$\Build" UserName="Administrator" Password="PQAte$t123-pa-tst4-ws16" />
+    </BuildAvailability>
+	<VMSetup>
+		<Machine host="pa-tst4-w10">
+			<Operation action="VmPowerOff" network="NEPTUNE" />
+			<Operation action="VmPowerOn" network="NEPTUNE" />
+		</Machine>
+		<Machine host="pa-tst5-w16">
+			<Operation action="VmRevert" network ="NEPTUNE" snap="BaseImage"/>
+		</Machine>
+	</VMSetup>
+	<ServerSetup>
+		<Machine host="pa-tst4-w7">
+			<Operation action="Download" BuildOutloc = "C:\Ica_build\" BuildDesc="JenB2"/>
+			<Operation action="Copy" BuildOutloc = "C:\Ica_build\" BuildDesc="FolB1"/>
+			<Operation action="Install" ExecutionFile="C:\imgdrv\Supdate.pl" />
+		</Machine>
+		<Machine host="pa-tst4-ws16">
+			<Operation action="Download" BuildOutloc = "C:\Ica_build\" BuildDesc="JenB1"/>
+			<Operation action="Install" ExecutionFile="C:\imgdrv\Supdate.pl" />
+		</Machine>
+	</ServerSetup>
+	<ClientSetup>
+		<Machine host="pa-tst4-w7">
+			<Operation action="Checkout"  CheckoutUrl ="http://10.4.16.25:8080/job/CURRENT_FULL/lastSuccessfulBuild/artifact/server/cds/IBM%20Merge%20PACS%20Server%20Software%20CD/*zip*/IBM%20Merge%20PACS%20Server%20Software%20CD.zip" />
+			<Operation action="Install" ExecutionFile="C:\Supdate.pl" />
+		</Machine>
+		<Machine host="pa-tst4-ws16">
+			<Operation action="Install" ExecutionFile="C:\Supdate.pl" />
+		</Machine>
+	</ClientSetup>
+	<EmailSettings>
+    <add key="RecipientList" value="vinothkumar.palanisamy@ravsoftsolutions.com" />
+    <add key="BuildSuccess" value="Yes" />
+    <add key="BuildFailure" value="Yes" />
+    <add key="NoLatestBuild" value="Yes" />
+    <add key="FolderNotExist" value="Yes" />
   </EmailSettings>
+	<Extra>
+	<Builds Desc="JenB1" BuildRepo="Jenkins" URL="https://ica-build-w2016.products.network.internal:8443" Job="iCA_Python" BuildChoice="Today" />
+    <Builds Desc="JenB2" BuildRepo="Jenkins" URL="https://ica-build-w2016.products.network.internal:8443" Job="iCA_Python" BuildChoice="LastSuccessful" />
+    <Builds Desc="JenB3" BuildRepo="Jenkins" URL="https://ica-build-w2016.products.network.internal:8443" Job="iCA_Python" BuildChoice="Predefined" PredefinedBuildID="1934"/>
+    <Builds Desc="FolB1" BuildRepo="Folder" NetworkFolderPath="\\10.5.239.248\C$\Build" UserName="Administrator" Password="PQAte$t123-pa-tst4-ws16" />
+    <Builds Desc="FolB2" BuildRepo="Folder" NetworkFolderPath="\\192.168.9.43\Testing3"  />    
+	</Extra>
 </configuration>
